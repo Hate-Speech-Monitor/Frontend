@@ -6,8 +6,15 @@ import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import Chip from "@mui/material/Chip";
+import Stack from "@mui/material/Stack";
 import { useState } from "react";
 import { useEffect } from "react";
+import React from "react";
 
 const getServerDetails = async (handler) => {
   let data = await fetch("http://127.0.0.1:5000/getGuilds");
@@ -16,10 +23,12 @@ const getServerDetails = async (handler) => {
 };
 
 const getOffenders = async (serverId, handler) => {
-  let data = await fetch(`http://127.0.0.1:5000/guild/getTop?guild=${serverId}`);
-  data = await data.json()
-  handler(data.data)
-}
+  let data = await fetch(
+    `http://127.0.0.1:5000/guild/getTop?guild=${serverId}`
+  );
+  data = await data.json();
+  handler(data.data);
+};
 
 const getServerCard = (server, serverId, setServerId) => {
   let iconAvatar;
@@ -64,6 +73,42 @@ const getServerCard = (server, serverId, setServerId) => {
   );
 };
 
+const getOffenseChips = (tags_count) => {
+  let res = []
+  for(let offense in tags_count) {
+    res.push(<Chip avatar={<Avatar>{tags_count[offense]}</Avatar>} label={offense} />)
+  }
+  return res
+}
+
+const getOffenderCard = (offender) => {
+  return (
+    <ListItem>
+      <ListItemAvatar>
+        <Avatar alt={offender.name} src={offender.image_url} />
+      </ListItemAvatar>
+      <ListItemText
+        primary={offender.name}
+        secondary={
+          <React.Fragment>
+            <Typography
+              sx={{ display: "block" }}
+              component="span"
+              variant="body2"
+              color="text.primary"
+            >
+              {`Offense Meter : ${offender.score}`}
+            </Typography>
+            <Stack direction="row" spacing={1}>
+              {getOffenseChips(offender.tags_count)}
+            </Stack>
+          </React.Fragment>
+        }
+      />
+    </ListItem>
+  );
+};
+
 function App() {
   const [servers, setServer] = useState([]);
   const [serverId, setServerId] = useState(null);
@@ -74,12 +119,12 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if(!serverId) {
-      setOffenders(null)
+    if (!serverId) {
+      setOffenders(null);
     } else {
-      getOffenders(serverId, setOffenders)
+      getOffenders(serverId, setOffenders);
     }
-  }, [serverId])
+  }, [serverId]);
 
   return (
     <div className="App">
@@ -117,15 +162,20 @@ function App() {
         </div>
       </div>
 
-      {offenders ? 
-      <div className="body-page2">
-        <div className="body-page2-heading">Offenders</div>
-        <hr />
-          {offenders.map((offender) => {
-            return ("Offender")
-          })}
-      </div> 
-      : null}
+      {offenders ? (
+        <div className="body-page2">
+          <div className="body-page2-heading">Offenders</div>
+          <hr />
+
+          <div className="body-page2-offenderlist">
+            <List sx={{ width: "100%", bgcolor: "background.paper" }}>
+              {offenders.map((offender) => {
+                return getOffenderCard(offender);
+              })}
+            </List>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
