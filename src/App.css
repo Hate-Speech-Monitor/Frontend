@@ -44,3 +44,13 @@
 .server-icon {
   float: right;
 }
+
+.body-page2 {
+  padding: 5%;
+  background-color: white;
+}
+
+.body-page2 .body-page2-heading {
+  font-size: 20px;
+  font-weight: bold;
+}
