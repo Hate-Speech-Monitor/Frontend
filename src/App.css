@@ -36,6 +36,11 @@
   font-weight: bold;
 }
 
-.body .body-page1-serverlist {
+.body-page1-serverlist {
   margin-top: 25px;
+  padding-top: 25px;
+}
+
+.server-icon {
+  float: right;
 }
